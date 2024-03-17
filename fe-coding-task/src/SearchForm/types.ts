@@ -1,12 +1,12 @@
-export interface SearchParams {
-  quartersRange: string;
-  houseType: HouseType;
+import { HouseType } from "../houseTypeOptions";
+
+export interface SearchFormProps {
+  onSubmit: (data: SearchParams) => void;
+  validateQuartersRange(value: string): string | boolean;
+  validateHouseType(value: string): string | boolean;
 }
 
-export const houseTypeOptions = {
-  "Boliger i alt": "00",
-  Småhus: "02",
-  Blokkleiligheter: "03",
-} as const;
-
-export type HouseType = keyof typeof houseTypeOptions;
+export type SearchParams = {
+  quartersRange: string;
+  houseType: HouseType;
+};

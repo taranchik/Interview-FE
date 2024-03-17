@@ -1,9 +1,19 @@
-import { HouseType } from "../SearchForm/types";
+import { HouseType } from "../houseTypeOptions";
 
 export interface PriceChartProps {
   quartersRange: string;
   houseType: HouseType;
+  validateQuartersRange(value: string): string | boolean;
+  validateHouseType(value: string): string | boolean;
+  parseQuaterRange(value: string): parsedQuaterRange;
 }
+
+type parsedQuaterRange = {
+  startYear: number;
+  startQuarter: number;
+  endYear: number;
+  endQuarter: number;
+};
 
 export type ChartData = {
   labels: string[];

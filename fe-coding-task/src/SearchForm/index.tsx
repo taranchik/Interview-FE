@@ -1,87 +1,95 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { SearchParams, houseTypeOptions } from "./types";
-import { TextField, Select, MenuItem, Button } from "@mui/material";
+import { SearchFormProps, SearchParams } from "./types";
+import {
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Typography,
+  Box,
+  Grid,
+  InputLabel,
+} from "@mui/material";
+import { houseTypeOptions } from "../houseTypeOptions";
 
-interface Props {
-  onSubmit: (data: SearchParams) => void;
-}
-
-const SearchForm: React.FC<Props> = ({ onSubmit }) => {
+const SearchForm: React.FC<SearchFormProps> = ({
+  onSubmit,
+  validateHouseType,
+  validateQuartersRange,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<SearchParams>();
-
-  const validateQuartersRange = (fromToQuarter: string): string | undefined => {
-    // Split the range into start and end
-    const [start, end] = fromToQuarter.split("-");
-
-    // Extract the year and quarter for both start and end
-    const [startYear, startQuarter] = start.split("K").map(Number);
-    const [endYear, endQuarter] = end.split("K").map(Number);
-
-    if (startYear === endYear && startQuarter > endQuarter) {
-      return "The end quarter must be after the start quarter";
-    } else if (startYear > endYear) {
-      return "The end year must be after the start year";
-    }
-  };
-
   return (
     <>
-      <h1>Search Form</h1>
+      <Typography variant="h4" gutterBottom>
+        Search Form
+      </Typography>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label htmlFor="quartersRange">
-            Quarters Range (e.g., 2016K1-2021K4):{" "}
-          </label>
-          <TextField
-            label="Quarters Range"
-            variant="outlined"
-            {...register("quartersRange", {
-              required: "Quarters range is required",
-              validate: validateQuartersRange,
-              pattern: {
-                value:
-                  /^(2009K[1-4]|20[1-9]\dK[1-4])-((2009|20[1-9]\d)K[1-4])$/,
-                message:
-                  "Enter a valid range from 2009K1 onwards in the format YYYYKQ-YYYYKQ",
-              },
-            })}
-            error={!!errors.quartersRange}
-          />
-          {errors.quartersRange && <p>{errors.quartersRange.message}</p>}
-        </div>
-        <div>
-          <label htmlFor="houseType">House Type: </label>
-          <Select
-            {...register("houseType", { required: "House type is required" })}
-            error={!!errors.houseType}
-            defaultValue=""
-            displayEmpty
-          >
-            <MenuItem value="" disabled>
-              Select a house type
-            </MenuItem>
-            {Object.entries(houseTypeOptions).map(([label, value]) => (
-              <MenuItem
-                key={value}
-                value={label}
-                {...register("houseType", {
-                  required: "House type is required",
-                })}
-              >
-                {label}
+        <Grid container spacing={1}>
+          <Grid item xs={6} container alignItems="center">
+            <InputLabel htmlFor="quartersRange">Quarters Range: </InputLabel>
+          </Grid>
+          <Grid item xs={6} container alignItems="center">
+            <TextField
+              fullWidth
+              id="quartersRange"
+              label="Quarters Range"
+              variant="outlined"
+              {...register("quartersRange", {
+                validate: validateQuartersRange,
+              })}
+              error={!!errors.quartersRange}
+            />
+          </Grid>
+          <Grid item xs={6}></Grid>
+          <Grid item xs={6}>
+            <Typography variant="body1" color="error">
+              {errors.quartersRange && errors.quartersRange.message}
+            </Typography>
+          </Grid>
+
+          <Grid item xs={6} container alignItems="center">
+            <InputLabel htmlFor="houseType">House Type: </InputLabel>
+          </Grid>
+          <Grid item xs={6} container alignItems="center">
+            <Select
+              fullWidth
+              id="houseType"
+              {...register("houseType", {
+                validate: validateHouseType,
+              })}
+              error={!!errors.houseType}
+              defaultValue=""
+              displayEmpty
+            >
+              <MenuItem value="" disabled>
+                Select a house type
               </MenuItem>
-            ))}
-          </Select>
-          {errors.houseType && <p>{errors.houseType.message}</p>}
-        </div>
-        <Button type="submit" variant="contained" color="primary">
-          Search
-        </Button>
+              {Object.entries(houseTypeOptions).map(([label, value]) => (
+                <MenuItem key={value} value={label}>
+                  {label}
+                </MenuItem>
+              ))}
+            </Select>
+          </Grid>
+          <Grid item xs={6}></Grid>
+          <Grid item xs={6}>
+            {errors.houseType && (
+              <Typography variant="body1" color="error">
+                {errors.houseType?.message}
+              </Typography>
+            )}
+          </Grid>
+        </Grid>
+        <Box mt={5.625}>
+          <Button type="submit" variant="contained" color="primary">
+            Search
+          </Button>
+        </Box>
       </form>
     </>
   );
