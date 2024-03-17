@@ -140,7 +140,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <Container sx={{ width: "500px" }}>
+    <Container sx={{ width: "800px" }}>
       <Suspense fallback={<CircularProgress />}>
         {searchParams["quartersRange"] && searchParams["houseType"] ? (
           <PriceChart
